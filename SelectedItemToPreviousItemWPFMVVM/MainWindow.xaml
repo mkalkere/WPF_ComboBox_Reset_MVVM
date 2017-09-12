@@ -1,0 +1,29 @@
+﻿<Window x:Class="SelectedItemToPreviousItemWPFMVVM.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SelectedItemToPreviousItemWPFMVVM"
+        mc:Ignorable="d"
+        Title="Resetting ComboBox To Previous Value" Height="350" Width="525" WindowStartupLocation="CenterScreen">
+    <Window.DataContext>
+        <local:MainWindowViewModel/>
+    </Window.DataContext>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+        </Grid.RowDefinitions>
+        <Label Content="Select Number: " Grid.Column="0" HorizontalAlignment="Right"/>
+        <ComboBox ItemsSource="{Binding Path=Numbers}" Grid.Column="1" HorizontalAlignment="Left"
+                  DisplayMemberPath="Name"
+                  SelectedValuePath="Value"
+                  SelectedItem="{Binding SelectedNumber, Mode=TwoWay}"
+                  SelectedIndex="0"
+                  Width="150"
+                  />
+    </Grid>
+</Window>
