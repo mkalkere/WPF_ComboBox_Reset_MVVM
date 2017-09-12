@@ -14,6 +14,7 @@ namespace SelectedItemToPreviousItemWPFMVVM
     public class MainWindowViewModel : INotifyPropertyChanged
     {
         #region Constructor
+        private bool _isControlLoaded { get; set; }
         public MainWindowViewModel()
         {
             InitializeCommands();
@@ -28,7 +29,7 @@ namespace SelectedItemToPreviousItemWPFMVVM
         #endregion
 
         #region ICommand
-        ICommand LoadedCommand { get; set; }
+        public ICommand LoadedCommand { get; set; }
         private void InitializeCommands()
         {
             LoadedCommand = new CustomCommand(OnLoaded, CanExecuteOnLoaded);
@@ -38,6 +39,7 @@ namespace SelectedItemToPreviousItemWPFMVVM
 
         private void OnLoaded(object obj)
         {
+            _isControlLoaded = true;
         }
         #endregion
 
@@ -57,27 +59,38 @@ namespace SelectedItemToPreviousItemWPFMVVM
             get { return _selectedNumber; }
             set
             {
-                var previousValue = _selectedNumber;
-
-                if (value == _selectedNumber)
-                    return;
-
-                _selectedNumber = value;
-
-                if (MessageBox.Show("Do you want to change to the Selected Item?", "Resetting ComboBox", MessageBoxButton.YesNo) != MessageBoxResult.Yes)
+                if (_isControlLoaded)
                 {
-                    Application.Current.Dispatcher.BeginInvoke(
-                    new Action(() =>
+                    var previousValue = _selectedNumber;
+
+                    if (value == _selectedNumber)
+                        return;
+
+                    _selectedNumber = value;
+
+                    if (MessageBox.Show("Do you want to change to the Selected Item?", "Resetting ComboBox", MessageBoxButton.YesNo) != MessageBoxResult.Yes)
                     {
-                        _selectedNumber = previousValue;
-                        RaisePropertyChanged(nameof(SelectedNumber));
-                    }),
-                    DispatcherPriority.Normal, null);
+                        Application.Current.Dispatcher.BeginInvoke(
+                        new Action(() =>
+                        {
+                            _selectedNumber = previousValue;
+                            RaisePropertyChanged(nameof(SelectedNumber));
+                        }),
+                        DispatcherPriority.Normal, null);
 
-                    return;
+                        return;
+                    }
+
+                    RaisePropertyChanged(nameof(SelectedNumber));
                 }
+                else
+                {
+                    if (value == _selectedNumber)
+                        return;
 
-                RaisePropertyChanged(nameof(SelectedNumber));
+                    _selectedNumber = value;
+                    RaisePropertyChanged(nameof(SelectedNumber));
+                }
             }
         }
 
